@@ -22,11 +22,13 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
+import { ref,onMounted } from 'vue'
+import {useStore} from 'vuex'
 export default {
   setup () {
     const leftDrawerOpen = ref(false)
+    const $store = useStore()
+    $store.dispatch('userInfo/getUser')
 
     return {
       leftDrawerOpen,

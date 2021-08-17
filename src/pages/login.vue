@@ -10,10 +10,11 @@
         <q-input
           filled
           v-model="loginform.username"
-          label="用户名"
-          hint="输入你的用户名"
+          label="邮箱"
+          hint="输入你注册的邮箱"
           lazy-rules
-          :rules="[ val => val && val.length > 0 || '用户名不能为空']"
+          :rules="[ val => val && val.length > 0 || '邮箱不能为空']"
+          type="email"
         />
         <q-input
           filled
@@ -27,10 +28,10 @@
         />
         <div class="full-width row wrap justify-center ">
           <div class="col-auto q-ma-md ">
-            <q-btn    label="登录" type="submit" color="primary"/>
+            <q-btn @click.prevent="login"   label="登录" type="submit" color="primary"/>
           </div>
           <div class="col-auto q-ma-md ">
-            <q-btn   label="重置" type="reset"/>
+            <q-btn to="register"  label="注册" />
           </div>
         </div>
       </q-form>
@@ -40,16 +41,57 @@
 </template>
 
 <script>
-import {reactive} from 'vue'
+import {reactive,onMounted} from 'vue'
+import {api} from "boot/axios";
+import qs from 'qs'
 export default {
   name: "login",
   setup(){
     const loginform=reactive({username:'',password:''})
 
+    const API=process.env.API_URL
+
+    onMounted(()=>{
+      // api.post(API+"/login",{
+      //   username:loginform.username
+      //
+      // })
+
+
+
+
+    })
+
+
     return{
-      loginform
+      loginform,
+      API
     }
 
+  },
+  methods:{
+    login(){
+      let form= qs.stringify({username:this.loginform.username,password:this.loginform.password})
+
+      api.post("/login",form).then(res=>{
+        console.log(res)
+        if(res.data.code===200) {
+          let authentication = res.headers['authorization']
+          localStorage.setItem('email',this.loginform.username)
+          console.log(res)
+          localStorage.setItem('auth', authentication)
+          this.$router.push({name:'main'})
+        }
+        else {
+          this.$q.notify({
+            message:'账号或密码错误',
+            textColor:'orange',
+            position:"center"
+          })
+        }
+      })
+
+    }
   }
 }
 </script>

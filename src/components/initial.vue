@@ -1,5 +1,11 @@
 <template>
-<div>
+
+
+<div class="fixed-center full-width">
+  <q-fab  class="q-mp-md" color="white" icon="keyboard_arrow_right" text-color="black"  direction="right">
+    <q-fab-action color="whith"  text-color="black" :to="{name:'login'}" icon="home" />
+    <q-fab-action color="whith" text-color="black" @click="reset"  icon="settings" />
+  </q-fab>
   <q-stepper
     v-model="step"
     ref="stepper"
@@ -9,6 +15,8 @@
     inactive-color="grey"
     header-nav
     keep-alive
+    :vertical="platform"
+
   >
     <q-step
       :name="1"
@@ -163,12 +171,15 @@
 
     <template v-slot:navigation>
       <q-stepper-navigation>
+
         <q-btn v-if="step<=2" @click="moveNext" color="deep-orange" label="下一步" />
         <q-btn v-if="step===3" color="deep-orange" label="注册" @click="register"/>
-        <q-btn v-if="step > 1" flat color="deep-orange" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
+        <q-btn v-if="step > 2" flat color="deep-orange" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
+
       </q-stepper-navigation>
     </template>
   </q-stepper>
+
 </div>
 </template>
 
@@ -190,7 +201,9 @@ export default {
       day:date.formatDate(Date.now(),'YYYY-MM-DD')
     })
     const $q = useQuasar();
-    const  step = ref(3)
+    console.log($q.platform.is.mobile)
+    console.log($q.platform.is.desktop)
+    const  step = ref(1)
     const mail = ref('')
     const emailRef = ref(null)
     const password = ref('')
@@ -198,6 +211,7 @@ export default {
     const next = ref(false)
     const username = ref('')
     const d = ref(false)
+    const platform = !$q.platform.is.desktop
     return{
      step,
       mail,
@@ -209,7 +223,8 @@ export default {
       username,
       user_2,
       config,
-      d
+      d,
+      platform
     }
 
   },
@@ -265,6 +280,18 @@ export default {
         }
       })
 
+    },
+    reset(){
+      this.mail=''
+      this.password=''
+      this.username=''
+      this.user_2.mail=''
+      this.user_2.password=''
+      this.user_2.username=''
+      this.config.day=date.formatDate(Date.now(),'YYYY-MM-DD')
+      this.step=1
+      this.next=false
+      this.user_2.next=false
     }
   }
 }
