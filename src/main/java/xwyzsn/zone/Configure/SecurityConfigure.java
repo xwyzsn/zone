@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import xwyzsn.zone.Handler.AuthFailHandler;
 import xwyzsn.zone.Handler.AuthSuccessHandler;
+import xwyzsn.zone.Handler.JwtAuthenticationEntryPoint;
+import xwyzsn.zone.Security.JwtAuthenticationFilter;
 
 @Configuration
 public class SecurityConfigure extends WebSecurityConfigurerAdapter {
@@ -31,6 +33,9 @@ public class SecurityConfigure extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthFailHandler authFailHandler;
 
+    @Autowired
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -39,6 +44,12 @@ public class SecurityConfigure extends WebSecurityConfigurerAdapter {
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    JwtAuthenticationFilter jwtAuthenticationFilter () throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter =new JwtAuthenticationFilter(authenticationManager());
+        return jwtAuthenticationFilter;
     }
 
     @Override
@@ -54,6 +65,11 @@ public class SecurityConfigure extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(WHITE_URL).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .addFilter(jwtAuthenticationFilter());
     }
 }

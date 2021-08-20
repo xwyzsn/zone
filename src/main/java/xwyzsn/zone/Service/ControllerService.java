@@ -1,12 +1,13 @@
 package xwyzsn.zone.Service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xwyzsn.zone.Entity.UserGroup;
-import xwyzsn.zone.Entity.Register;
-import xwyzsn.zone.Entity.User;
+import xwyzsn.zone.Entity.*;
 import xwyzsn.zone.Mapper.GroupMapper;
+import xwyzsn.zone.Mapper.ScoreMapper;
 import xwyzsn.zone.Mapper.UserMapper;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class ControllerService {
     private UserMapper userMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ScoreMapper scoreMapper;
 
     @Autowired
     private GroupMapper groupMapper;
@@ -52,5 +55,39 @@ public class ControllerService {
         UserGroup g = new UserGroup(group,userIdFir,userIdSec,date);
         groupMapper.insert(g);
         userService.saveBatch(list);
+    }
+
+    public UserGroupDetail getUser(String email) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email",email);
+        QueryWrapper<UserGroup> userGroupQueryWrapper =new QueryWrapper<>();
+        User user = userMapper.selectOne(queryWrapper);
+        String id = user.getGroupId();
+        userGroupQueryWrapper.eq("group_id",id);
+        UserGroup userGroup = groupMapper.selectOne(userGroupQueryWrapper);
+        UserGroupDetail userGroupDetail = new UserGroupDetail(user.getUsername(),user.getEmail(),user.getUserId(),
+                user.getGroupId(),userGroup.getUserFirstId(),userGroup.getUserSecId(),
+                userGroup.getDate());
+        return userGroupDetail;
+    }
+
+    public Object getScore(String groupId) {
+
+        QueryWrapper<Score> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("group_id",groupId);
+        List<Score> scoreList = scoreMapper.selectList(queryWrapper);
+        return scoreList;
+    }
+
+    public void postScore(Score score) {
+        scoreMapper.insert(score);
+    }
+
+    public void giftFinish(String id, String finish) {
+        Integer queryId = Integer.valueOf(id);
+        UpdateWrapper<Score> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",queryId).set("gift_finish",finish);
+        scoreMapper.update(null,updateWrapper);
+
     }
 }
