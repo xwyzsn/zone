@@ -4,14 +4,19 @@ const routes = [
     path: '/main',
     component: () => import('layouts/MainLayout.vue'),
     name:'main',
+    redirect:'/main/index',
     children: [
-      { path: '', component: () => import('pages/indexshow.vue') },
+      { path: 'index', component: () => import('pages/indexshow.vue') },
+      {path: 'chart',component:()=>import('pages/score.vue')},
+      {path: 'addscore',component:()=>import('pages/addscore.vue')},
+      {path:'gift',component:()=>import('pages/gift.vue')}
     ]
   },
   {path:'/',
    name:'login',
    component:()=>import('pages/login.vue')
   },
+  {path: '/refresh',component:()=>import('pages/blank.vue')},
   {
     path: '/register',
     name: 'register',

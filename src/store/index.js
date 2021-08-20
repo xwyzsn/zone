@@ -2,7 +2,7 @@ import { store } from 'quasar/wrappers'
 import { createStore } from 'vuex'
 
 import userInfo from './userInfo'
-
+import score from './score'
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation;
@@ -16,7 +16,8 @@ export default store(function (/* { ssrContext } */) {
   const Store = createStore({
     modules: {
       // example
-      userInfo
+      userInfo,
+      score
     },
 
     // enable strict mode (adds overhead!)
@@ -26,3 +27,4 @@ export default store(function (/* { ssrContext } */) {
 
   return Store
 })
+export {store}

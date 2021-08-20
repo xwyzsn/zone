@@ -31,7 +31,7 @@
             <q-btn @click.prevent="login"   label="登录" type="submit" color="primary"/>
           </div>
           <div class="col-auto q-ma-md ">
-            <q-btn to="register"  label="注册" />
+            <q-btn to="register"  label="注册" @click="register" />
           </div>
         </div>
       </q-form>
@@ -42,30 +42,26 @@
 
 <script>
 import {reactive,onMounted} from 'vue'
+import {useRouter} from "vue-router"
 import {api} from "boot/axios";
 import qs from 'qs'
 export default {
   name: "login",
   setup(){
     const loginform=reactive({username:'',password:''})
-
+    const $router = useRouter();
     const API=process.env.API_URL
-
-    onMounted(()=>{
-      // api.post(API+"/login",{
-      //   username:loginform.username
-      //
-      // })
-
-
-
-
-    })
+    function register(){
+      $router.push({
+        path:'/register'
+      })
+    }
 
 
     return{
       loginform,
-      API
+      API,
+      register
     }
 
   },
@@ -74,11 +70,9 @@ export default {
       let form= qs.stringify({username:this.loginform.username,password:this.loginform.password})
 
       api.post("/login",form).then(res=>{
-        console.log(res)
         if(res.data.code===200) {
           let authentication = res.headers['authorization']
           localStorage.setItem('email',this.loginform.username)
-          console.log(res)
           localStorage.setItem('auth', authentication)
           this.$router.push({name:'main'})
         }
@@ -91,7 +85,8 @@ export default {
         }
       })
 
-    }
+    },
+
   }
 }
 </script>

@@ -28,11 +28,16 @@ export default route(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to,from,next)=>{
     let auth = localStorage.getItem('auth');
-    if(to.name !=='login' && !auth){
+    if(to.name === 'register') {
+      next()
+    }
+    else if(to.name !=='login' && !auth){
       next({name:'login'})
     }else if(to.name==='login' && auth){
       next()
-    }else {
+    }
+
+    else {
       next()
     }
 

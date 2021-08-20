@@ -201,8 +201,7 @@ export default {
       day:date.formatDate(Date.now(),'YYYY-MM-DD')
     })
     const $q = useQuasar();
-    console.log($q.platform.is.mobile)
-    console.log($q.platform.is.desktop)
+
     const  step = ref(1)
     const mail = ref('')
     const emailRef = ref(null)
@@ -236,7 +235,6 @@ export default {
       this.step===1?password=this.password: password= this.user_2.password;
       this.step===1?username = this.username:username =this.user_2.username;
       next = this.step===1?this.next:this.user_2.next;
-      console.log(password,username,this.step)
       if (next===true && password!=='' && password && username!=='' && username){
         this.$refs.stepper.next()
       }
